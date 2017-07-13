@@ -1,0 +1,38 @@
+<html><meta charset="gb2312">
+<head>
+<link href="style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+    function show(){
+        //var a = document.getElementById("inp").value;
+        var aa=document.getElementById("ico").title;
+        //alert();
+        if(aa == "隐藏密码"){
+            document.getElementById("in").type="password";
+            document.getElementById("ico").title = "显示密码";
+            document.getElementById("ico").src="ico.png"; 
+        }else{
+            document.getElementById("ico").title = "隐藏密码";
+            document.getElementById("in").type="text";
+            document.getElementById("ico").src="o_ico.png";    
+        }
+        
+    }
+	
+	
+</script>
+</head>
+	<body>
+	<h1>登录</h1>
+	<form method="post">  
+		请输入用户名：<input type="text" required="required" placeholder="用户名" name="u"/>
+		<br><br> 
+		请输入密码： &nbsp&nbsp&nbsp<input type="password" required="required" placeholder="密码" id="in"/>
+		<img id="ico" onclick="show()" title="显示密码" src="ico.png"/>
+		<br><br>
+		记住密码<input type="checkbox" name="remember" value="记住密码"/>
+		<br><br>
+		<button class="but" type="submit">登录</button>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+		<button class="but" type="submit">注册</button>		
+	</form>  
+	</body>
+</html>
