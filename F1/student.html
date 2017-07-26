@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>学生管理系统</title>
+	</head>
+	
+	<body>
+		<div>
+			添加学生<br>
+			姓名:<input type="text" id="n"> <br>
+			性别:<input type="text" id="s"><br>
+			学号:<input type="text" id="i"><br>
+			年级:<input type="text" id="g"><br>
+			专业:<input type="text" id="p"><br>
+			<input type="button" value="提交" onclick="create()">
+		</div>
+		
+		<div>
+			搜索学生<br>
+			学号:<input type="text" id="id_s"><br>
+			<input type="button" value="搜索学生" onclick="search()"></button>
+		</div>
+		
+		<div>
+			删除学生<br>
+			学号:<input type="text" id="id_d"><br>
+			<input type="button" value="删除学生" onclick="delect()"/>
+		</div>
+		
+		<div>
+			修改学生信息<br>
+			请输入要修改学生的学号：<br>
+			学号:<input type="text" id="i_m"><br>
+			输入要修改的内容(无需改动的项目可不填)：<br>
+			姓名:<input type="text" id="n_m"> <br>
+			性别:<input type="text" id="s_m"><br>
+			年级:<input type="text" id="g_m"><br>
+			专业:<input type="text" id="p_m"><br>
+			<input type="button" value="修改学生信息" onclick="modify()"></button>
+		</div>
+		<div id="info"></div>
+	</body>
+</html>
+
+<script>
+	//姓名/性别/学号/年级/专业
+	var name,sex,id,grade,pro;
+	
+	//新建学生信息
+	function create(){
+		name=document.getElementById("n").value;
+		sex=document.getElementById("s").value;
+		id=document.getElementById("i").value;
+		grade=document.getElementById("g").value;
+		pro=document.getElementById("p").value;
+		var stu=new Array();
+		stu[0]=name;stu[1]=sex;stu[2]=id;stu[3]=grade;stu[4]=pro;
+		localStorage.setItem(id,stu);
+		//document.getElementById("info").innerHTML =localStorage.getItem(id);
+	}
+	
+	//搜索学生
+	function search(){
+		id=document.getElementById("id_s").value;
+		if(localStorage.getItem(id)){
+			//document.getElementById("info").innerHTML =localStorage.getItem(id);
+			var show=new Array;
+			var arr=localStorage.getItem(id);
+			show=arr.split(",");
+			document.getElementById("info").innerHTML ="姓名："+show[0]+" 性别："+show[1]+" 学号："+show[2]+" 年级："+show[3]+" 专业："+show[4];
+		}
+		else
+		document.getElementById("info").innerHTML ="没有找到";
+	}
+	
+	//删除学生
+	function delect(){
+		id=document.getElementById("id_d").value;
+		if(localStorage.getItem(id)){
+			localStorage.removeItem(id);
+			document.getElementById("info").innerHTML ="删除成功";
+		}
+		else
+		document.getElementById("info").innerHTML ="删除失败";
+	}
+	
+	//修改学生信息
+	function modify(){
+		id=document.getElementById("i_m").value;
+		if(localStorage.getItem(id)){
+			var tem=new Array;
+			var t=localStorage.getItem(id);
+			tem=t.split(",");
+			
+			//获得表单提交的信息
+			name=document.getElementById("n_m").value;
+			sex=document.getElementById("s_m").value;
+			grade=document.getElementById("g_m").value;
+			pro=document.getElementById("p_m").value;
+			
+			//将修改后的信息存入数组
+			var stu=new Array();
+			stu[2]=id;
+			if(name){
+				stu[0]=name;
+			}
+			else{
+				stu[0]=tem[0];
+			}
+			if(sex){
+				stu[1]=sex;
+			}
+			else{
+				stu[1]=tem[1];
+			}
+			if(grade){
+				stu[3]=grade;
+			}
+			else{
+				stu[3]=tem[3];
+			}
+			if(pro){
+				stu[4]=pro;
+			}
+			else{
+				stu[4]=tem[4];
+			}
+			
+			//储存修改信息
+			localStorage.setItem(id,stu);
+			document.getElementById("info").innerHTML ="修改成功";
+		}
+		else
+		document.getElementById("info").innerHTML ="找不到该学生";
+	}
+</script>
