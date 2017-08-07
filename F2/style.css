@@ -1,0 +1,44 @@
+.show {
+  margin: 0;
+  padding: 0;
+  width: 800px;
+  height: 500px;
+  border: 1px #eeeeee solid;
+  margin: 100px auto;
+  position: relative;
+  overflow: hidden;
+}
+.show ul {
+  list-style: none;
+  width: 2500px;
+  position: relative;
+}
+.show ul li {
+  float: left;
+  width: 800px;
+}
+.show .num {
+  position: absolute;
+  right: 10px;
+  bottom: 5px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 20px;
+}
+.show .num span {
+  cursor: pointer;
+  display: block;
+  float: left;
+  width: 20px;
+  height: 20px;
+  background: #ff5a28;
+  margin-left: 2px;
+  color: #fff;
+}
+.show .num .active {
+  background: #b63e1a;
+}
+* {
+  margin: 0;
+  padding: 0;
+}
