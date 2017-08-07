@@ -1,0 +1,50 @@
+
+@div_wid:800px;
+@div_hei:500px;
+@num_wid:20px;
+@num_hei:20px;
+
+.show{
+    margin: 0;  
+    padding: 0;
+    width: @div_wid;
+    height: @div_hei;
+    border: 1px #eeeeee solid;
+    margin: 100px auto;
+    position: relative;
+    overflow: hidden; 
+    ul{  
+        list-style:none;
+        width: 2500px;
+        position: relative;
+        li{  
+            float: left; 
+            width: @div_wid;
+        }		
+    }
+    .num{
+        position: absolute;
+        right: 10px;
+        bottom: 5px;
+        text-align:center;
+        font-size: 12px;
+        line-height: @num_wid;
+        span{  
+            cursor: pointer;  
+            display: block;
+            float: left;
+            width: @num_wid;
+            height: @num_hei;
+            background: #ff5a28;
+            margin-left: 2px;
+            color: #fff;
+        }
+        .active{
+            background: #b63e1a;
+        }
+    }
+}
+*{  
+    margin: 0;  
+    padding: 0;  
+} 
