@@ -1,0 +1,27 @@
+<html>
+    <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.js"></script>
+    <script src="Carousel.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".show").carousel();
+        });
+    </script>
+    </head>
+    <body>
+        <div class="show" id="show">
+            <ul class="pic">
+                <li><img src="1.jpg" height="600px" width="800px" /></li>
+                <li><img src="2.jpg" height="600px" width="800px" /></li>
+                <li><img src="3.jpg" height="600px" width="800px" /></li>
+            </ul>
+            <div class="num">
+                <span class="active">1</span>
+                <span>2</span>
+                <span>3</span>
+            </div>
+        </div>
+    </body>
+</html>
