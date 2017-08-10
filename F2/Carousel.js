@@ -9,9 +9,10 @@
             touch = true;
         //点击数字事件	
         num.on("click",function(){
-            $(this).siblings().removeClass("active");
-            $(this).addClass("active");
-            i = $(this).index();
+            var $this = $(this);
+            $this.siblings().removeClass("active");
+            $this.addClass("active");
+            i = $this.index();
             ul.animate({"left":-width*i});
         });
         //自动播放
