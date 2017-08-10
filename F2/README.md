@@ -1,0 +1,1 @@
+index_new.html为两个轮播图的页面
