@@ -1,6 +1,6 @@
 (function ($) {
-    $.fn.carousel = function () {
-         var show = $(".show"),
+    $.fn.carousel = function (id) {
+         var show = $("#"+id),
                ul = show.find("ul"),
               num = show.find(".num span"),
             width = show.find("ul li").eq(0).width(),
@@ -32,7 +32,7 @@
 	
 	      //触摸滑动模块
         function k_touch() {
-            var _start = 0, _end = 0, _content = document.getElementById("show");
+            var _start = 0, _end = 0, _content = document.getElementById(id);
             _content.addEventListener("touchstart", touchStart, false);
             _content.addEventListener("touchmove", touchMove, false);
             _content.addEventListener("touchend", touchEnd, false);
