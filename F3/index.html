@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>colorPicker</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">  
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <canvas id="canvas" width="600" height="600"></canvas>
+        <em id="cur"></em>                   <!--在画布上标明选择区域的小方块-->
+        <div class="colorPicker">
+            <div id="show"></div><br>        <!--颜色展示区域-->
+            <div>
+                rgb <input type="text"  class="color_input form-control" value="" id="rgb">
+            </div><br>
+            <div>
+                hsl <input type="text"  class="color_input form-control" value="" id="hsl">
+            </div><br>
+            <div id="sub">
+                <button type="button" class="btn btn-success">OK</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        (function(){
+            var width = 300;
+            var can = document.getElementById('canvas');
+            var ctx = can.getContext('2d');
+            var curColor = 'rgba(255,0,0,1)';
+            var cur = document.getElementById('cur');
+            var rgbValue = document.getElementById('rgb');
+            var hslValue = document.getElementById('hsl');
+            var show = document.getElementById('show');
+            var sub = document.getElementById('sub');
+
+            //大概色相的选择画布
+            function colorBar() {
+                var gradientBar = ctx.createLinearGradient(0, 0, 0, width);
+                gradientBar.addColorStop(0, '#f00');
+                gradientBar.addColorStop(1/6, '#f0f');
+                gradientBar.addColorStop(2/6, '#00f');
+                gradientBar.addColorStop(3/6, '#0ff');
+                gradientBar.addColorStop(4/6, '#0f0');
+                gradientBar.addColorStop(5/6, '#ff0');
+                gradientBar.addColorStop(1, '#f00');
+
+                ctx.fillStyle = gradientBar;
+                ctx.fillRect(0, 0, 20, width);
+            }
+
+            //hsl转化为rgb
+            function hslToRgb(h, s, l){
+                var r, g, b;
+                if(s == 0){
+                    r = g = b = l;
+                }
+                else{
+                    var hue2rgb = function hue2rgb(p, q, t){
+                        if(t < 0) t += 1;
+                        if(t > 1) t -= 1;
+                        if(t < 1/6) return p + (q - p) * 6 * t;
+                        if(t < 1/2) return q;
+                        if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                        return p;
+                    }
+
+                    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                    var p = 2 * l - q;
+                    r = hue2rgb(p, q, h + 1/3);
+                    g = hue2rgb(p, q, h);
+                    b = hue2rgb(p, q, h - 1/3);
+                }
+                return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+            }
+            
+            //rgb转化为hsl
+            function rgbToHsl(r, g, b){
+                r /= 255, g /= 255, b /= 255;
+                var max = Math.max(r, g, b), min = Math.min(r, g, b);
+                var h, s, l = (max + min) / 2;
+                
+                if(max == min){
+                    h = s = 0;
+                }
+                else{
+                    var d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch(max){
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
+                    }
+                    h /= 6;
+                }
+				        return [Math.floor(h*100), Math.round(s*100)+"%", Math.round(l*100)+"%"];
+            }
+			      
+            //精确颜色的选择画布
+            function colorBox(color) {
+                // 底色填充，也就是color到白色(默认为红色)
+                var gradientBase = ctx.createLinearGradient(30, 0, width + 30, 0);//与左侧的区域隔开一定的距离，所以起始的坐标为30
+                gradientBase.addColorStop(1, color);
+                gradientBase.addColorStop(0, 'rgba(255,255,255,1)');
+                ctx.fillStyle = gradientBase;
+                ctx.fillRect(30, 0, width, width);
+				
+                // 第二次填充，黑色到透明
+                var my_gradient1 = ctx.createLinearGradient(0, 0, 0, width);
+                my_gradient1.addColorStop(0, 'rgba(0, 0, 0, 0)');
+                my_gradient1.addColorStop(1, 'rgba(0, 0, 0, 1)');
+                ctx.fillStyle = my_gradient1;
+                ctx.fillRect(30, 0, width, width);
+            }
+            
+            //初始颜色填充
+            function init() {
+                colorBar();
+                colorBox(curColor);
+                bind();
+                inputColor();
+            }
+            
+            //点击事件
+            function bind() {
+                can.addEventListener('click', function(e) {
+                    //点击位置的x y坐标
+                    var ePos = {
+                        x: e.offsetX || e.layerX,//兼容不同浏览器
+                        y: e.offsetY || e.layerY
+                    }
+                    var rgbaStr = '#000';
+                    
+                    //点击小的画布区域（色相的选择）
+                    if (ePos.x >= 0 && ePos.x < 20 && ePos.y >= 0 && ePos.y < width) {
+                        rgbaStr = getRgbaAtPoint(ePos, 'bar');//获得颜色值
+                        colorBox('rgba(' + rgbaStr + ')');//把颜色放到colorBox精确颜色选择画布上
+                    } 
+                    
+                    //点击大的画布区域（精确颜色的选择）
+                    else if (ePos.x >= 30 && ePos.x < 30 + width && ePos.y >= 0 && ePos.y < width) {
+                        rgbaStr = getRgbaAtPoint(ePos, 'box');//获得颜色值
+                    } 
+                    else {
+                        return;
+                    }
+                    outColor(rgbaStr.slice(0, 3).join());//读取r g b数据并把所有数据放入一个字符串
+                    cur.style.left = ePos.x + 'px';
+                    cur.style.top = ePos.y + 'px';
+                });
+            }
+            
+            //填写颜色的rgb和hsl值到右侧相应的表单中
+            function outColor(rgb) {
+                var arr = rgb.split(",");
+                rgbValue.value = rgb;
+                hslValue.value = rgbToHsl(arr[0], arr[1], arr[2]);
+                show.style.backgroundColor = 'rgb(' + rgb + ')';//选中颜色的样式展示在colorShow的区域
+            }
+            
+            //获取颜色
+            function getRgbaAtPoint(pos, area) {
+                if (area == 'bar') {
+                    var imgData = ctx.getImageData(0, 0, 20, width);//复制画布上指定矩形的所有像素
+                } else {
+                    var imgData = ctx.getImageData(0, 0, can.width, can.height);//复制画布上指定矩形的所有像素
+                }
+
+                var data = imgData.data;
+                var dataIndex = (pos.y * imgData.width + pos.x) * 4;//(pos.y * imgData.width + pos.x)为(0,0)到点击点的像素值，*4表示一个像素由r g b a四个数据组成，最后读出该位置像素的第一个坐标
+                return [
+                    data[dataIndex],
+                    data[dataIndex + 1],
+                    data[dataIndex + 2],
+                    (data[dataIndex + 3] / 255).toFixed(2),
+                ];
+            }
+            
+            //查看输入的颜色
+            function inputColor(){
+                sub.addEventListener('click', function() {
+                    var arr,rgb;
+                    rgb = rgbValue.value;
+                    show.style.backgroundColor = 'rgb(' + rgb + ')';
+                    var arr = rgb.split(",");
+                    hslValue.value = rgbToHsl(arr[0], arr[1], arr[2]);
+                });
+            }
+            init();
+        })()
+    </script>
+</body>
+</html>
